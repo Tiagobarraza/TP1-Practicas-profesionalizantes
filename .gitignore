@@ -1,0 +1,17 @@
+# Entorno virtual
+venv/
+env/
+ENV/
+.venv/
+# Archivos de sistema
+__pycache__/
+*.pyc
+.DS_Store
+# Variables de entorno
+.env
+.env.local
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
