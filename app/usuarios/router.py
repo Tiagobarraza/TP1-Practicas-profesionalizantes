@@ -1,28 +1,16 @@
-from fastapi import APIRouter, HTTPException, Body, Path, Query
-from pydantic import BaseModel
-from typing import List, Annotated
+from typing import Annotated
+from fastapi import APIRouter, HTTPException, Path, Query
+from app.usuarios.schemas import UsernameAnnotated, EdadAnnotated
+from app.database import db_usuarios
 
+# El router DEBE tener el prefijo "/users"
 router = APIRouter(prefix="/users")
 
-# Base de datos temporal
-db_usuarios = []
-
-# Esquema de usuario
-class Usuario(BaseModel):
-    username: str
-    edad: int
-
-# Validaciones con Annotated
-UsernameAnnotated = Annotated[str, Body(min_length=5)]
-EdadAnnotated = Annotated[int, Body(ge=18)]
-
-# Ejercicio 1: Registro de usuario
-@router.post("/")
-def registrar_usuario(
-    username: UsernameAnnotated,
-    edad: EdadAnnotated
-):
-    # Verificar si ya existe
+# Ejercicio 1: Registro de usuario (Devuelve 201 en éxito)
+@router.post("/", status_code=201)
+def registrar_usuario(username: UsernameAnnotated, edad: EdadAnnotated):
+    
+    # Verificar si ya existe el usuario
     for u in db_usuarios:
         if u["username"] == username:
             raise HTTPException(status_code=400, detail="Usuario ya existe")
@@ -30,6 +18,7 @@ def registrar_usuario(
     nuevo_usuario = {"username": username, "edad": edad}
     db_usuarios.append(nuevo_usuario)
     return {"mensaje": "Usuario registrado", "usuario": nuevo_usuario}
+
 
 # Ejercicio 2: Búsqueda por ID
 @router.get("/{user_id}")
